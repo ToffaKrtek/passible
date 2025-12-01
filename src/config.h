@@ -1,4 +1,5 @@
-#include <cstddef>
+#include <stddef.h>
+
 struct passible_config {
   char *log_file;
   int log_level; // 0=error, 1=warning, 2=info, 3=debug
@@ -27,4 +28,5 @@ struct passible_config {
 };
 
 int config_load(const char *path, struct passible_config *out);
+
 void config_free();
