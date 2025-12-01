@@ -1,0 +1,41 @@
+# Сборка и объектные файлы
+/build/
+/CMakeCache.txt
+/CMakeFiles/
+/Makefile
+/cmake_install.cmake
+/install_manifest.txt
+*.o
+*.a
+*.so
+passible
+
+# eBPF объекты и артефакты
+*.bpf.o
+*.bpf.c
+*.skel.h
+*.bpf.h
+
+# IDE и редакторы
+.vscode/
+.ccls
+.clangd/
+compile_commands.json
+
+# Логи и временные файлы
+/var/
+/logs/
+*.log
+*.jsonl
+
+# Конфигурация (шаблоны — в репо, реальные — нет)
+/etc/
+!conf.yml.example
+
+# Пакеты и зависимости (если они локально в репо)
+/libbpf/
+/vendored/
+
+# Артефакты тестов
+/test_output/
+*.pc
