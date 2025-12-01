@@ -1,3 +1,0 @@
-/home/toffa/projects/passible/build/CMakeFiles/passible.dir
-/home/toffa/projects/passible/build/CMakeFiles/edit_cache.dir
-/home/toffa/projects/passible/build/CMakeFiles/rebuild_cache.dir
