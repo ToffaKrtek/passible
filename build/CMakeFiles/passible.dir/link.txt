@@ -1,0 +1,1 @@
+/usr/bin/cc  -Wall -Wextra -g -O2 -Wl,--dependency-file=CMakeFiles/passible.dir/link.d CMakeFiles/passible.dir/src/main.c.o CMakeFiles/passible.dir/src/config.c.o CMakeFiles/passible.dir/src/bpf_loader.c.o CMakeFiles/passible.dir/src/event_handler.c.o CMakeFiles/passible.dir/src/logging.c.o -o passible  /usr/lib/x86_64-linux-gnu/libbpf.so /usr/lib/x86_64-linux-gnu/libyaml.so
