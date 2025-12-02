@@ -1,14 +1,18 @@
+#include "config.h"
 #include "logging.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 int main(int argc, char *argv[]) {
   // TODO:: init loger (open file/join to journald)
-  logging_init("/tmp/passible_test.log"); // TEST
-  logging_alert("{\"test\" : true}");     // TEST
-  logging_shutdown();                     // TEST
+  // logging_init("/tmp/passible_test.log"); // TEST
+  // logging_alert("{\"test\" : true}");     // TEST
+  // logging_shutdown();                     // TEST
 
   // TODO:: load conf.yml + optional flag '-c'
+  passible_config conf;
+  config_load("conf.yml", &conf);
+  config_free(&conf);
 
   // TODO:: load eBPF-app by skeleton
   // TODO:: SIGINT/SIGTERM -> correctly upload BPF and exit

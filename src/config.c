@@ -1,70 +1,85 @@
-#include <cstring>
+#include "config.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <yaml.h>
 
-int config_load(const char *path, struct passible_config *out) {
+int config_load(const char *path, passible_config *out) {
   FILE *fh = fopen(path, "r");
-  yaml_parser_t parser;
-  yaml_token_t token;
-
-  if (yaml_parser_initialize(&parser)) {
-    return EXIT_FAILURE;
-  }
   if (fh == NULL) {
     return EXIT_FAILURE;
   }
-  int next_key = 0;
-  int next_value = 0;
-  char key_value[32] = "";
-  char current_section[32] = "";
+  yaml_parser_t parser;
+  yaml_document_t document;
 
+  if (!yaml_parser_initialize(&parser)) {
+    fclose(fh);
+    return EXIT_FAILURE;
+  }
   yaml_parser_set_input_file(&parser, fh);
+  if (yaml_parser_load(&parser, &document) != 1) {
+    fclose(fh);
+    return EXIT_FAILURE;
+  }
+
+  yaml_node_t *root = yaml_document_get_root_node(&document);
+  if (!root || root->type != YAML_MAPPING_NODE) {
+    yaml_document_delete(&document);
+    fclose(fh);
+    return EXIT_FAILURE;
+  }
   memset(out, 0, sizeof(*out));
-  do {
-    yaml_parser_scan(&parser, &token);
-    switch (token.type) {
-    case YAML_KEY_TOKEN:
-      next_key = 1;
-      next_value = 0;
-      break;
-    case YAML_VALUE_TOKEN:
-      next_key = 0;
-      next_value = 1;
-      break;
-    case YAML_SCALAR_TOKEN:
-      if (next_key == 1) {
-        strcpy(key_value, token.data.scalar.value);
-        break;
-      }
-      if (next_value == 1) {
+  out->log_level = 2;
+  out->network.ignore_localhost = 1;
+  out->network.ignore_private_networks = 1;
+  out->detection.min_heartbeat_interval_sec = 20;
 
-        if (strcmp(key_value, "log_file") == 0) {
-          out->log_file = malloc(token.data.scalar.length + 1);
-          if (out->log_file) {
-            memccpy(out->log_file, token.data.scalar.value,
-                    token.data.scalar.length);
-            out->log_file[token.data.scalar.length] = '\0';
-          }
-        } else if (strcmp(key_value, "log_level") == 0) {
+  for (yaml_node_pair_t *pair = root->data.mapping.pairs.start;
+       pair < root->data.mapping.pairs.top; pair++) {
+    yaml_node_t *key_node = yaml_document_get_node(&document, pair->key);
+    yaml_node_t *value_node = yaml_document_get_node(&document, pair->value);
 
-          out->log_level = malloc(token.data.scalar.length + 1);
-          if (out->log_level) {
-            memccpy(out->log_level, token.data.scalar.value,
-                    token.data.scalar.length);
-            out->log_level[token.data.scalar.length] = '\0';
+    if (key_node->type == YAML_SCALAR_NODE) {
+      if (strcmp((char *)key_node->data.scalar.value, "network") &&
+          value_node->type == YAML_MAPPING_NODE) {
+        for (yaml_node_pair_t *network_pair =
+                 key_node->data.mapping.pairs.start;
+             network_pair < key_node->data.mapping.pairs.top; network_pair++) {
+          yaml_node_t *network_key_node =
+              yaml_document_get_node(&document, network_pair->key);
+          yaml_node_t *network_value_node =
+              yaml_document_get_node(&document, network_pair->value);
+          if (network_key_node->type == YAML_SCALAR_NODE) {
+            if (strcmp((char *)network_key_node->data.scalar.value,
+                       "ignore_localhost")) {
+              out->network.ignore_localhost =
+                  atoi((char *)network_value_node->data.scalar.value);
+            } else if (strcmp((char *)network_key_node->data.scalar.value,
+                              "ignore_private_networks")) {
+              out->network.ignore_private_networks =
+                  atoi((char *)network_value_node->data.scalar.value);
+            } else if (strcmp((char *)network_key_node->data.scalar.value,
+                              "ignore_public_dns")) {
+              out->network.ignore_public_dns =
+                  atoi((char *)network_value_node->data.scalar.value);
+            }
           }
-        } else if (strcmp(key_value, "network") == 0) {
         }
-        break;
+      } else if (strcmp((char *)key_node->data.scalar.value, "detection") &&
+                 value_node->type == YAML_MAPPING_NODE) {
       }
     }
-  } while (token.type != YAML_STREAM_END_TOKEN);
-  yaml_token_delete(&token);
+  }
 
-  fclose(fh);
   return EXIT_SUCCESS;
 }
 
-void config_free(struct passible_config *cfg) { free(cfg); }
+void config_free(passible_config *cfg) {
+  if (!cfg)
+    return;
+  free(cfg->log_file);
+  cfg->log_file = NULL;
+  free(cfg->network.ignore_destinations);
+  cfg->network.ignore_destinations = NULL;
+}
