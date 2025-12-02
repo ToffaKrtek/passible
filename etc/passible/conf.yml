@@ -1,0 +1,18 @@
+log_file: /var/log/passible.log
+log_level: 1
+network:
+  ignore_localhost: 1
+  ignore_private_networks: 1
+  ignore_public_dns: 1
+  ignore_destinations:
+    - example.com
+detection:
+  trusted_processes:
+    - systemd
+  suspicious_ports:
+    - 53
+  min_heartbeat_interval_sec: 20
+  enable_entropy_check: 1
+prometheus:
+  enabled: 1
+  port: 9090
