@@ -12,6 +12,7 @@ int main(int argc, char *argv[]) {
   // TODO:: load conf.yml + optional flag '-c'
   passible_config conf;
   config_load("conf.yml", &conf);
+  print_config(&conf);
   config_free(&conf);
 
   // TODO:: load eBPF-app by skeleton

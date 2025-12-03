@@ -1,18 +1,21 @@
-log_file: /var/log/passible.log
-log_level: 1
+log_file: /tmp/passible.log
+log_level: info
 network:
-  ignore_localhost: 1
-  ignore_private_networks: 1
+  ignore_localhost: true
+  ignore_private_networks: true
   ignore_public_dns: 1
   ignore_destinations:
-    - example.com
+    - "10.0.0.0/8"
+    - "192.168.0.0/16"
 detection:
   trusted_processes:
-    - systemd
+    - sshd
+    - nginx
   suspicious_ports:
-    - 53
+    - 4444
+    - 5555
   min_heartbeat_interval_sec: 20
-  enable_entropy_check: 1
+  enable_entropy_check: true
 prometheus:
   enabled: 1
   port: 9090
