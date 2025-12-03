@@ -10,10 +10,10 @@ int main(int argc, char *argv[]) {
   // logging_shutdown();                     // TEST
 
   // TODO:: load conf.yml + optional flag '-c'
-  passible_config conf;
-  config_load("conf.yml", &conf);
-  print_config(&conf);
-  config_free(&conf);
+  // passible_config conf;
+  // config_load("conf.yml", &conf);
+  // print_config(&conf);
+  // config_free(&conf);
 
   // TODO:: load eBPF-app by skeleton
   // TODO:: SIGINT/SIGTERM -> correctly upload BPF and exit
