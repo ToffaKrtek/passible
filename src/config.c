@@ -1,11 +1,11 @@
 #include "config.h"
+#include "types.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <yaml.h>
 
-const int EXIT_WITH_ERROR = -1;
 const char *DEFAULT_LOG_FILE = "/var/log/passible.log";
 
 passible_log_level get_log_level(char *level) {
@@ -266,7 +266,7 @@ int config_load(const char *path, passible_config *out) {
     }
   }
 
-  return EXIT_SUCCESS;
+  return EXIT_OK;
 }
 
 void config_free(passible_config *cfg) {

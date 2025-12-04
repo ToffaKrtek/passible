@@ -1,3 +1,4 @@
+#include "types.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -11,9 +12,9 @@ int logging_init(const char *log_path) {
   }
 
   if (fptr == NULL) {
-    return EXIT_FAILURE;
+    return EXIT_WITH_ERROR;
   }
-  return EXIT_SUCCESS;
+  return EXIT_OK;
 }
 
 void logging_alert(const char *event) {
